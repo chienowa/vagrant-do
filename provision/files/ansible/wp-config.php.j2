@@ -1,0 +1,27 @@
+<?php
+define('DB_NAME', '{{dbname}}');
+define('DB_USER', '{{dbuser}}');
+define('DB_PASSWORD', '{{dbpassword}}');
+define('DB_HOST', 'localhost');
+define('DB_CHARSET', 'utf8');
+define('DB_COLLATE', '');
+
+{{ secret_keys.stdout }}
+
+$table_prefix  = 'wp_';
+
+define('WPLANG', 'ja');
+define('WP_DEBUG', false);
+
+if (isset($_SERVER['HTTP_X_FORWARDED_HOST']))
+	$_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+
+if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+	$_SERVER['HTTPS'] = 'on';
+
+/** Absolute path to the WordPress directory. */
+if ( !defined('ABSPATH') )
+	define('ABSPATH', dirname(__FILE__) . '/');
+
+/** Sets up WordPress vars and included files. */
+require_once(ABSPATH . 'wp-settings.php');

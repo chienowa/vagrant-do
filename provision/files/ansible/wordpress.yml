@@ -1,0 +1,114 @@
+---
+- hosts: wordpress
+  sudo: yes
+  connection: local
+  vars:
+    dbname: wordpress
+    dbuser: wordpress
+    dbpassword: wordpress
+
+  tasks:
+    - name: be sure httpd is installed
+      yum: name=httpd state=latest
+      tags: httpd
+
+    - name: create document root
+      file: dest=/var/www/wordpress state=directory owner=apache group=apache mode=0755
+
+    - name: be sure httpd is configured
+      template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+      tags: httpd
+
+    - name: restart httpd
+      service: name=httpd state=restarted
+
+    - name: remove httpd welcome.conf
+      file: path=/etc/httpd/conf.d/welcome.conf state=absent
+      tags: httpd
+
+    - name: restart httpd
+      service: name=httpd state=restarted
+
+    - name: be sure httpd is running and enabled
+      service: name=httpd state=running enabled=yes
+      tags: httpd  
+
+
+    - name: restart httpd
+      service: name=httpd state=restarted
+
+    - name: change wordpress files owner
+      command: chown -R apache:apache /var/www/wordpress
+
+    - name: be sure mysql-server is installed
+      yum: name={{item}} state=installed
+      with_items:
+             - mysql-server
+             - MySQL-python
+      tags: mysqld
+
+    - name: be sure mysqld is running and enabled
+      service: name=mysqld state=started enabled=yes
+      tags: mysqld
+
+    - name: Create database
+      mysql_db: db={{dbname}} state=present encoding=utf8
+      tags: mysqld
+
+    - name: Create database user
+      mysql_user: >
+             name={{dbuser}}
+             password={{dbpassword}}
+             priv=wordpress.*:ALL
+             state=present
+      tags: mysqld 
+
+    - name: be sure php is installed
+      yum: name={{item}} state=installed enablerepo=epel
+      with_items:
+            - php
+            - php-mysql
+            - php-mbstring
+            - php-gd
+            - php-pear
+            - php-pecl-apcu
+      tags: php
+
+    - name: set timezone in php.ini
+      lineinfile: >
+            dest=/etc/php.ini
+            regexp='^;?date.timezone ='
+            line='date.timezone = Asia/Tokyo'
+            owner=root
+            group=root
+            mode=0644
+      tags: php
+
+    - name: restart httpd
+      service: name=httpd state=restarted
+
+
+    - name: download wordpress package
+      get_url: url=http://ja.wordpress.org/wordpress-3.9.2-ja.tar.gz dest=/var/tmp/
+      tags: wordpress
+
+    - name: extract wordpress tar ball
+      shell: tar xf /var/tmp/wordpress-3.9.2-ja.tar.gz chdir=/var/www creates=/var/www/wordpress/wp-admin/index.php
+      tags: wordpress
+
+    - name: change wordpress files owner
+      command: chown -R apache:apache /var/www/wordpress
+
+    - name: generate secret keys
+      command: curl -o /var/www/wordpress/secret-keys.php -s https://api.wordpress.org/secret-key/1.1/salt/ creates=/var/www/wordpress/secret-keys.php
+      tags: wordpress
+
+    - name: read secret keys
+      command: cat /var/www/wordpress/secret-keys.php
+      register: secret_keys
+      tags: wordpress
+
+    - name: configure wp-config.php
+      template: src=wp-config.php.j2 dest=/var/www/wordpress/wp-config.php owner=apache group=apache mode=0400
+      tags: wordpress
+
