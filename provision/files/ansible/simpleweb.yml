@@ -1,0 +1,30 @@
+---
+- hosts: all
+  sudo: yes
+  connection: local
+  vars:
+     work_dir: /var/www/html
+     repos_dir: "{{ work_dir }}"
+     branch: master
+  tasks:
+    - name: be sure httpd is installed
+      yum: name=httpd state=latest
+      tags: httpd
+
+    - name: create document root
+      file: dest=/var/www/html state=directory owner=apache group=apache mode=0755
+
+    - name: remove httpd welcome.conf
+      file: path=/etc/httpd/conf.d/welcome.conf state=absent
+      tags: httpd
+
+    - name: be sure httpd is running and enabled
+      service: name=httpd state=running enabled=yes
+      tags: httpd  
+
+    - name: restart httpd
+      service: name=httpd state=restarted
+
+# clone htm sources from git repo 
+#    - name: git clone from src
+#      git: repo=git@bitbucket.org:chienowa/costpa.git dest={{repos_dir}} version={{branch}} accept_hostkey=yes 
