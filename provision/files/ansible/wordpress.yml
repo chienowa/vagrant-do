@@ -1,5 +1,5 @@
 ---
-- hosts: wordpress
+- hosts: all
   sudo: yes
   connection: local
   vars:
