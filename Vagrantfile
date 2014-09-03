@@ -54,8 +54,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.provision :shell, inline: "chmod 600 /home/#{ENV['DO_SSH_USERNAME']}/.ssh/config"
     override.vm.provision :shell, inline: "chmod 644 /home/#{ENV['DO_SSH_USERNAME']}/.gitconfig"
     #override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook simpleweb.yml -i hosts --connection=local"
-    override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook wordpress.yml -i hosts --connection=local"
-    #override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook varnish.yml -i hosts --connection=local"
+    #override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook wordpress.yml -i hosts --connection=local"
+    override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook varnish.yml -i hosts --connection=local"
 
   end
 
