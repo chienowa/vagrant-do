@@ -33,9 +33,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.provision :shell, path: "./provision/tasks/bootstrap.sh", args: [ENV['DO_SSH_USERNAME']]
     override.vm.provision :file,  source: "./provision/files/.ssh/config", destination: "/home/#{ENV['DO_SSH_USERNAME']}/.ssh/config"
     override.vm.provision :file,  source: "./provision/files/.gitconfig",  destination: "/home/#{ENV['DO_SSH_USERNAME']}/.gitconfig"
+
     override.vm.provision :file,  source: "./provision/files/ansible/hosts", destination: "/tmp/hosts"
+    
+    #for wordpress.yml
+    override.vm.provision :file,  source: "./provision/files/ansible/httpd.conf.j2", destination: "/tmp/httpd.conf.j2"
+    override.vm.provision :file,  source: "./provision/files/ansible/wp-config.php.j2", destination: "/tmp/wp-config.php.j2"
+    
+    #for varnish.yml
     override.vm.provision :file,  source: "./provision/files/ansible/default.vcl", destination: "/tmp/default.vcl"
     override.vm.provision :file,  source: "./provision/files/ansible/etc-sysconfig-varnish", destination: "/tmp/etc-sysconfig-varnish"
+ 
+    #for ansible
     override.vm.provision :file,  source: "./provision/files/ansible/simpleweb.yml", destination: "/tmp/simpleweb.yml"
     override.vm.provision :file,  source: "./provision/files/ansible/wordpress.yml", destination: "/tmp/wordpress.yml"
     override.vm.provision :file,  source: "./provision/files/ansible/varnish.yml", destination: "/tmp/varnish.yml"
@@ -44,8 +53,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.provision :shell, inline: "chmod 700 /home/#{ENV['DO_SSH_USERNAME']}/.ssh"
     override.vm.provision :shell, inline: "chmod 600 /home/#{ENV['DO_SSH_USERNAME']}/.ssh/config"
     override.vm.provision :shell, inline: "chmod 644 /home/#{ENV['DO_SSH_USERNAME']}/.gitconfig"
-    override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook simpleweb.yml -i hosts --connection=local"
-    #override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook wordpress.yml -i hosts --connection=local"
+    #override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook simpleweb.yml -i hosts --connection=local"
+    override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook wordpress.yml -i hosts --connection=local"
     #override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook varnish.yml -i hosts --connection=local"
 
   end

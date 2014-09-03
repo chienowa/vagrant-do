@@ -59,7 +59,7 @@
       mysql_user: >
              name={{dbuser}}
              password={{dbpassword}}
-             priv=wordpress.*:ALL
+             priv={{dbname}}.*:ALL
              state=present
       tags: mysqld 
 
