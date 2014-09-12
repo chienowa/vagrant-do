@@ -34,6 +34,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     override.vm.provision :file,  source: "./provision/files/.ssh/config", destination: "/home/#{ENV['DO_SSH_USERNAME']}/.ssh/config"
     override.vm.provision :file,  source: "./provision/files/.gitconfig",  destination: "/home/#{ENV['DO_SSH_USERNAME']}/.gitconfig"
     override.vm.provision :file,  source: "./provision/files/ansible/hosts", destination: "/tmp/hosts"
+    override.vm.provision :file,  source: "./provision/files/ansible/htaccess.j2", destination: "/tmp/htaccess.j2"
+    override.vm.provision :file,  source: "./provision/files/ansible/simpleweb.conf.j2", destination: "/tmp/simpleweb.conf.j2"
     override.vm.provision :file,  source: "./provision/files/ansible/default.vcl", destination: "/tmp/default.vcl"
     override.vm.provision :file,  source: "./provision/files/ansible/etc-sysconfig-varnish", destination: "/tmp/etc-sysconfig-varnish"
     override.vm.provision :file,  source: "./provision/files/ansible/simpleweb.yml", destination: "/tmp/simpleweb.yml"
