@@ -42,6 +42,7 @@ git
 ansible
 python-setuptools
 libselinux-python
+python-passlib
 rsync
 _EOT_`
 
