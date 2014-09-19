@@ -16,7 +16,7 @@
       file: dest=/var/www/wordpress state=directory owner=apache group=apache mode=0755
 
     - name: be sure httpd is configured
-      template: src=httpd.conf.j2 dest=/etc/httpd/conf/httpd.conf
+      template: src=wordpress.conf.j2 dest=/etc/httpd/conf.d/wordpress.conf
       tags: httpd
 
     - name: restart httpd

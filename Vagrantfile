@@ -25,42 +25,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     provider.private_networking   = true
     provider.ca_path              = "/usr/local/share/ca-bundle.crt"
     provider.setup                = true
+    provider.ssh_key_name         = ENV['DO_SSH_KEYNAME']
 
     # disable synced_folder: rsync is not installed on DigitalOcean's base image
     override.vm.synced_folder "./", "/vagrant", disabled: true
 
-    # provision
-    override.vm.provision :shell, path: "./provision/tasks/bootstrap.sh", args: [ENV['DO_SSH_USERNAME']]
-    override.vm.provision :file,  source: "./provision/files/.ssh/config", destination: "/home/#{ENV['DO_SSH_USERNAME']}/.ssh/config"
-    override.vm.provision :file,  source: "./provision/files/.gitconfig",  destination: "/home/#{ENV['DO_SSH_USERNAME']}/.gitconfig"
-
-    override.vm.provision :file,  source: "./provision/files/ansible/hosts", destination: "/tmp/hosts"
-    
-    #for wordpress.yml
-    override.vm.provision :file,  source: "./provision/files/ansible/wordpress.conf.j2", destination: "/tmp/wordpress.conf.j2"
-    override.vm.provision :file,  source: "./provision/files/ansible/wp-config.php.j2", destination: "/tmp/wp-config.php.j2"
-    
-    #for varnish.yml
-    override.vm.provision :file,  source: "./provision/files/ansible/htaccess.j2", destination: "/tmp/htaccess.j2"
-    override.vm.provision :file,  source: "./provision/files/ansible/simpleweb.conf.j2", destination: "/tmp/simpleweb.conf.j2"
-    override.vm.provision :file,  source: "./provision/files/ansible/default.vcl", destination: "/tmp/default.vcl"
-    override.vm.provision :file,  source: "./provision/files/ansible/etc-sysconfig-varnish", destination: "/tmp/etc-sysconfig-varnish"
- 
-    #for ansible
-    override.vm.provision :file,  source: "./provision/files/ansible/simpleweb.yml", destination: "/tmp/simpleweb.yml"
-    override.vm.provision :file,  source: "./provision/files/ansible/wordpress.yml", destination: "/tmp/wordpress.yml"
-    override.vm.provision :file,  source: "./provision/files/ansible/varnish.yml", destination: "/tmp/varnish.yml"
-
-
-    override.vm.provision :shell, inline: "chmod 700 /home/#{ENV['DO_SSH_USERNAME']}/.ssh"
-    override.vm.provision :shell, inline: "chmod 600 /home/#{ENV['DO_SSH_USERNAME']}/.ssh/config"
-    override.vm.provision :shell, inline: "chmod 644 /home/#{ENV['DO_SSH_USERNAME']}/.gitconfig"
-    #override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook simpleweb.yml -i hosts --connection=local"
-    #override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook wordpress.yml -i hosts --connection=local"
-    override.vm.provision :shell, inline: "cd /tmp ; ansible-playbook varnish.yml -i hosts --connection=local"
-
   end
 
+  config.vm.provision "ansible" do |ansible|
+      ansible.sudo = true
+      ansible.playbook = "./provision/files/ansible/mt.yml"
+      #ansible.playbook = "./provision/files/ansible/playbook.yml"
+  end
   config.ssh.forward_agent = true
 
 end

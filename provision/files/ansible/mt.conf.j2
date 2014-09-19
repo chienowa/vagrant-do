@@ -1,0 +1,13 @@
+NameVirtualHost *:80
+
+<VirtualHost *:80>
+ServerName digital-ocean
+DocumentRoot /var/www/mtroot
+    <Directory "/var/www/mtroot">
+        Options All
+        AddHandler cgi-script .pl .cgi
+        AllowOverride All
+        Order Allow,Deny
+        Allow from all
+    </Directory>
+</VirtualHost>

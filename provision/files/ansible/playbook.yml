@@ -1,0 +1,59 @@
+---
+- hosts: all
+  sudo: yes
+  vars:
+     work_dir: /var/www/html
+     auth_file: /etc/httpd/conf.d/basic_auth_passwd 
+     auth_user: webuser
+     auth_pswd: climarksweb 
+     repos_dir: "{{ work_dir }}"
+     branch: master
+  tasks:
+    - name: upgrade all yum packages
+      yum: name=* state=latest
+
+    - name: get epel-repo rpm RHEL6
+      get_url: dest=/tmp/epel-release.rpm  url=http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+    - name: install epel-repo rpm
+      yum: pkg=/tmp/epel-release.rpm state=installed
+
+    - name: be sure python libraries are installed
+      yum: name={{item}} state=installed
+      with_items:
+             - python-passlib
+      tags: ansible
+
+
+    - name: be sure httpd is installed
+      yum: name=httpd state=latest
+      tags: httpd
+
+    - name: create document root
+      file: dest={{ work_dir }} state=directory owner=apache group=apache mode=0755
+
+    - name: remove httpd welcome.conf
+      file: path=/etc/httpd/conf.d/welcome.conf state=absent
+      tags: httpd
+
+    - name: be sure httpd is configured
+      template: src=simpleweb.conf.j2 dest=/etc/httpd/conf.d/simpleweb.conf
+      tags: httpd
+
+    - name: put basic authentication file
+      htpasswd: path={{ auth_file }} name={{ auth_user }} password={{ auth_pswd }} owner=root group=root mode=0644
+      tags: httpd
+
+    - name: put .htaccess under the document root
+      template: src=htaccess.j2 dest={{ work_dir }}/.htaccess
+      tags: httpd
+
+    - name: be sure httpd is running and enabled
+      service: name=httpd state=running enabled=yes
+      tags: httpd  
+
+    - name: restart httpd
+      service: name=httpd state=restarted
+
+# clone htm sources from git repo 
+#    - name: git clone from src
+#      git: repo=git@bitbucket.org:chienowa/costpa.git dest={{repos_dir}} version={{branch}} accept_hostkey=yes 
