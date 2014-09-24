@@ -2,26 +2,22 @@
 - hosts: all
   sudo: yes
   vars:
-    dbname: wordpress
-    dbuser: wordpress
-    dbpassword: wordpress
-    docroot: /var/www/wordpress
-    version: "3.9.2"        
+    dbname: drupal
+    dbuser: drupal
+    dbpassword: drupal
+    docroot: /var/www/drupal
+    version: "7.31" 
+
   tasks:
-    - name: install required yum packages           
-      yum: name={{item}} state=latest
-      with_items:
-             - httpd
-             - git
-             - ImageMagick
-             - ImageMagick-devel  
-      tags: common 
+    - name: be sure httpd is installed
+      yum: name=httpd state=latest
+      tags: httpd
 
     - name: create document root
-      file: dest={{docroot}} state=directory owner=apache group=apache mode=0755
+      file: dest={{ docroot }} state=directory owner=apache group=apache mode=0755
 
     - name: be sure httpd is configured
-      template: src=wordpress.conf.j2 dest=/etc/httpd/conf.d/wordpress.conf
+      template: src=drupal.conf.j2 dest=/etc/httpd/conf.d/drupal.conf
       tags: httpd
 
     - name: restart httpd
@@ -42,8 +38,8 @@
     - name: restart httpd
       service: name=httpd state=restarted
 
-    - name: change wordpress files owner
-      command: chown -R apache:apache {{docroot}}
+    - name: change drupal files owner
+      command: chown -R apache:apache {{ docroot }}
 
     - name: be sure mysql-server is installed
       yum: name={{item}} state=installed
@@ -68,12 +64,6 @@
              state=present
       tags: mysqld 
 
-    - name: get epel-repo rpm RHEL6
-      get_url: dest=/tmp/epel-release.rpm  url=http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
- 
-    - name: install epel-repo rpm
-      yum: pkg=/tmp/epel-release.rpm state=installed
-
     - name: be sure php is installed
       yum: name={{item}} state=installed enablerepo=epel
       with_items:
@@ -83,6 +73,7 @@
             - php-gd
             - php-pear
             - php-pecl-apcu
+            - php-xml  
       tags: php
 
     - name: set timezone in php.ini
@@ -98,23 +89,12 @@
     - name: restart httpd
       service: name=httpd state=restarted
 
-    - name: download wordpress package
-      git : repo=https://github.com/WordPress/WordPress.git dest="{{docroot}}" version={{version}}
-      tags: wordpress
 
-    - name: change wordpress files owner
+    - name: download drupal package
+      git : repo=http://git.drupal.org/project/drupal.git dest="{{docroot}}" version={{version}}
+      tags: drupal
+
+    - name: change drupal files owner
       command: chown -R apache:apache {{docroot}}
 
-    - name: generate secret keys
-      command: curl -o {{docroot}}/secret-keys.php -s https://api.wordpress.org/secret-key/1.1/salt/ creates={{docroot}}/secret-keys.php
-      tags: wordpress
-
-    - name: read secret keys
-      command: cat {{docroot}}/secret-keys.php
-      register: secret_keys
-      tags: wordpress
-
-    - name: configure wp-config.php
-      template: src=wp-config.php.j2 dest={{docroot}}/wp-config.php owner=apache group=apache mode=0400
-      tags: wordpress
 

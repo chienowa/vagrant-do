@@ -34,8 +34,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "ansible" do |ansible|
       ansible.sudo = true
+      ansible.playbook = "./provision/files/ansible/drupal.yml"
       ansible.playbook = "./provision/files/ansible/mt.yml"
-      #ansible.playbook = "./provision/files/ansible/playbook.yml"
+      ansible.playbook = "./provision/files/ansible/wordpress.yml"
   end
   config.ssh.forward_agent = true
 

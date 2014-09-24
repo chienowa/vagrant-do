@@ -36,7 +36,7 @@
     - name: be sure mtroot is not there
       file: path={{mtroot}} state=absent
 
-    - name: git clone from src
+    - name: git clone from src and make document root
       git: repo=https://github.com/movabletype/movabletype.git dest="{{mtroot}}/mt" #version=mtos5.2.10
 
     - name: make movabletype
@@ -105,9 +105,6 @@
             mode=0644
       tags: php
 
-    - name: restart httpd
-      service: name=httpd state=restarted
-
     - name: configure mt-readme.html
       template: src=mt-readme.html.j2 dest={{mtroot}}/index.html owner={{ssh_user}} group={{ssh_user}} mode=0644
       tags: mt
@@ -132,5 +129,8 @@
               - perl-Mail-Sendmail
               - perl-Net-SMTP-SSL
       tags: ansible
+
+    - name: restart httpd
+      service: name=httpd state=restarted
 
 
