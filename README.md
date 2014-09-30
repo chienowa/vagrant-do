@@ -6,8 +6,7 @@
 
 vagrant + degitalocean + ansible + varnish　で簡単にテスト環境を作るスクリプトサンプルです。
 普通のhtml, wordpress , drupal ,mt のセットアップを8080 ポートで行い、varnish が 80 番ポートでLISTENします。
-各CMSのインストールは、http://wordpress-do:8080/ , http://mt-do:8080/ , http://drupal-do:8080/ 
-といった形でアクセスを行いインストールを実行してください。
+各CMSのインストールは、各VHにアクセスを行いインストールを実行してください。
 
 ### How do I get set up? ###
 
@@ -58,13 +57,34 @@ DO_API_TOKEN=“{changeme}"
 
 $ git checkout master
 
-$ ssh-add
-$ ssh-agent #digitalocean 上でgit cloneを行うためにagentを起動しておく
+$ ssh-add   
+$ ssh-agent #digitalocean 上でgit cloneを行うためにagentを起動しておく.結果的にこれは特に必要なし。
 $ vagrant up --provider=digital_ocean --provision
 
 ```
 
-6. サーバ構築完了！
+6. ローカルのhostsに追加
+128.199.150.xx   default-do	default-do
+128.199.150.xx   mt-do	mt-do
+128.199.150.xx   drupal-do	drupal-do
+128.199.150.xx   wordpress-do	wordpress-do
+128.199.150.xx   costpa.net    costpa.net
+
+7. サーバ構築完了！
+http://wordpress-do:8080/
+http://mt-do:8080/
+http://drupal-do:8080/ 
+
+でダイレクトアクセスし、インストールを実行します。
+
+varnish は80番ポートで動作しており、
+http://wordpress-do
+http://mt-do
+http://drupal-do
+
+で利用可能です。
+varnish/vars/main.yml で追加でキャッシュするサイトを指定することができます。
+
 
 * Configuration
 
