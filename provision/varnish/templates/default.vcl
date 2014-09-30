@@ -6,7 +6,7 @@
 #
 import std;
 backend default {
-  .host = "192.168.33.10";
+  .host = "default-do";
   .port = "8080";
   .connect_timeout = 3.0s;
   .first_byte_timeout = 45s;
@@ -66,13 +66,13 @@ sub vcl_recv {
        set req.backend = {{ host_tag }};
    }
 
-   if (req.http.host == "wordpress-do") {
+   if (req.http.host == "wordpress-do" || req.http.host == "wordpress-do:8080") {
        set req.backend = wordpress;
    }
-   if (req.http.host == "drupal-do") {
+   if (req.http.host == "drupal-do" || req.http.host == "drupal-do:8080") {
        set req.backend = drupal;
    }
-   if (req.http.host == "mt-do") {
+   if (req.http.host == "mt-do" || req.http.host == "mt-do:8080") {
        set req.backend = mt;
    }
 
