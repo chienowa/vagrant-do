@@ -16,6 +16,11 @@
 - name: be sure httpd is installed
   yum: name=httpd state=latest
 
+- name: be sure python libraries are installed
+  yum: name={{item}} state=installed
+  with_items:
+      - python-passlib
+         
 - name: create document root
   file: dest={{ work_dir }} state=directory owner=apache group=apache mode=0755
 
@@ -40,6 +45,7 @@
 - name: set hosts file
   lineinfile: dest=/etc/hosts backup=yes insertafter="{{item.insertafter}}" line="{{item.line}}"
   with_items: 
+      - { line: "{{ ansible_eth0.ipv4.address }} default-do default-do", insertafter: EOF }
       - { line: "{{ ansible_eth0.ipv4.address }} wordpress-do wordpress-do", insertafter: EOF }
       - { line: "{{ ansible_eth0.ipv4.address }} mt-do mt-do", insertafter: EOF }
       - { line: "{{ ansible_eth0.ipv4.address }} drupal-do drupal-do", insertafter: EOF }

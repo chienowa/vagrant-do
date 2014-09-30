@@ -21,7 +21,6 @@
       yum: name={{item}} state=installed
       with_items:
              - python-passlib
-      tags: ansible
 
 
     - name: be sure httpd is installed

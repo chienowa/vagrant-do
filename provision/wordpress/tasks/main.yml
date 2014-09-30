@@ -18,12 +18,6 @@
 - name: restart httpd
   service: name=httpd state=restarted
 
-- name: remove httpd welcome.conf
-  file: path=/etc/httpd/conf.d/welcome.conf state=absent
-
-- name: restart httpd
-  service: name=httpd state=restarted
-
 - name: change wordpress files owner
   command: chown -R apache:apache {{docroot}}
 
