@@ -1,0 +1,72 @@
+- name: be sure httpd is running and enabled
+  service: name=httpd state=running enabled=yes
+
+- name: create document root
+  file: dest={{ docroot }} state=directory owner=apache group=apache mode=0755
+
+- name: be sure httpd vhost is configured
+  template: src=drupal.conf.j2 dest=/etc/httpd/conf.d/drupal.conf
+
+- name: restart httpd
+  service: name=httpd state=restarted
+
+
+- name: remove httpd welcome.conf
+  file: path=/etc/httpd/conf.d/welcome.conf state=absent
+
+- name: restart httpd
+  service: name=httpd state=restarted
+
+- name: change drupal files owner
+  command: chown -R apache:apache {{ docroot }}
+
+- name: be sure mysql-server is installed
+  yum: name={{item}} state=installed
+  with_items:
+     - mysql-server
+     - MySQL-python
+
+- name: be sure mysqld is running and enabled
+  service: name=mysqld state=started enabled=yes
+
+- name: Create database
+  mysql_db: db={{dbname}} state=present encoding=utf8
+
+- name: Create database user
+  mysql_user: >
+     name={{dbuser}}
+     password={{dbpassword}}
+     priv={{dbname}}.*:ALL
+     state=present
+
+- name: be sure php is installed
+  yum: name={{item}} state=installed enablerepo=epel
+  with_items:
+    - php
+    - php-mysql
+    - php-mbstring
+    - php-gd
+    - php-pear
+    - php-pecl-apcu
+    - php-xml  
+
+- name: set timezone in php.ini
+  lineinfile: >
+    dest=/etc/php.ini
+    regexp='^;?date.timezone ='
+    line='date.timezone = Asia/Tokyo'
+    owner=root
+    group=root
+    mode=0644
+
+- name: restart httpd
+  service: name=httpd state=restarted
+
+- name: download drupal package
+  git : repo=http://git.drupal.org/project/drupal.git dest="{{docroot}}" version={{version}}
+
+- name: change drupal files owner
+  command: chown -R apache:apache {{docroot}}
+
+
+

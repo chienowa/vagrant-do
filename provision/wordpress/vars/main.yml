@@ -1,0 +1,5 @@
+dbname: wordpress
+dbuser: wordpress
+dbpassword: wordpress
+docroot: /var/www/wordpress
+version: "3.9.2"        

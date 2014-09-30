@@ -1,9 +1,9 @@
-NameVirtualHost *:80
+NameVirtualHost *:8080
 
-<VirtualHost *:80>
-ServerName drupal-do
-DocumentRoot /var/www/drupal
-    <Directory "/var/www/drupal">
+<VirtualHost *:8080>
+ServerName default-do
+DocumentRoot /var/www/html
+    <Directory "/var/www/html">
         Options All
         AllowOverride All
         Order Allow,Deny

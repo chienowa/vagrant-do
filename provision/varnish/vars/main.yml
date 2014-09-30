@@ -1,0 +1,5 @@
+listen_port: 80
+cache_ttl: 180 # ttl seconds
+cache_storage: "malloc,100M" # use memory cache
+host_tag: costpa # change me
+host_name: costpa.net #change me      

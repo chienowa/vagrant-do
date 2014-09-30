@@ -1,0 +1,18 @@
+- name: be sure varnish 3 rpm is installed
+  yum: name=https://repo.varnish-cache.org/redhat/varnish-3.0.el6.rpm state=present
+
+- name: install varnish
+  yum: name=varnish state=present
+
+- name: configure varnish vcl
+  template: src=default.vcl dest=/etc/varnish/default.vcl
+
+- name: configure /etc/sysconfig/varnish
+  template: src=etc-sysconfig-varnish dest=/etc/sysconfig/varnish 
+
+- name: restart varnish
+  service: name=varnish state=restarted
+
+- name: be sure varnish is running and enabled
+  service: name=varnish state=running enabled=yes
+

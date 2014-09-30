@@ -1,0 +1,7 @@
+work_dir: /var/www/html
+auth_file: /etc/httpd/conf.d/basic_auth_passwd 
+auth_user: webuser
+auth_pswd: webpassword 
+repos_dir: "{{ work_dir }}"
+branch: master
+

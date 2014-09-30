@@ -1,0 +1,5 @@
+ssh_user: ec2-user    
+mtroot: /var/www/mtroot
+dbname: mtos
+dbuser: mtos
+dbpassword: mtos 

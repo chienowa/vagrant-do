@@ -1,0 +1,7 @@
+dbname: drupal
+dbuser: drupal
+dbpassword: drupal
+docroot: /var/www/drupal
+version: "7.31" 
+
+

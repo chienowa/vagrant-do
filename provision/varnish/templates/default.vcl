@@ -7,11 +7,36 @@
 import std;
 backend default {
   .host = "192.168.33.10";
-  .port = "80";
+  .port = "8080";
   .connect_timeout = 3.0s;
   .first_byte_timeout = 45s;
   .between_bytes_timeout = 30s;
 }
+
+backend wordpress {
+  .host = "wordpress-do";
+  .port = "8080";
+  .connect_timeout = 3.0s;
+  .first_byte_timeout = 45s;
+  .between_bytes_timeout = 30s;
+}
+
+backend mt {
+  .host = "mt-do";
+  .port = "8080";
+  .connect_timeout = 3.0s;
+  .first_byte_timeout = 45s;
+  .between_bytes_timeout = 30s;
+}
+
+backend drupal {
+  .host = "drupal-do";
+  .port = "8080";
+  .connect_timeout = 3.0s;
+  .first_byte_timeout = 45s;
+  .between_bytes_timeout = 30s;
+}
+
 
 backend {{ host_tag }} {
   .host = "{{ host_name }}";
@@ -37,9 +62,20 @@ sub vcl_recv {
    std.syslog(0, "[vcl_recv - req.host]" + req.http.host);
 
 
-   if (req.http.host == "{{ host_name }}:6081" || req.http.host == "{{ host_name }}") {
+   if (req.http.host == "{{ host_name }}:6081" || req.http.host == "{{ host_name }}:{{ listen_port }}" || req.http.host == "{{ host_name }}") {
        set req.backend = {{ host_tag }};
    }
+
+   if (req.http.host == "wordpress-do") {
+       set req.backend = wordpress;
+   }
+   if (req.http.host == "drupal-do") {
+       set req.backend = drupal;
+   }
+   if (req.http.host == "mt-do") {
+       set req.backend = mt;
+   }
+
   #set req.http.Host="mdcms.site-test.jp";
   #set req.http.Host="www.biyougeka.com";
   if (req.request == "GET" && req.url ~ "^/varnishcheck$") {
