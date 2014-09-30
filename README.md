@@ -10,9 +10,7 @@ vagrant + degitalocean + ansible + varnish　で簡単にテスト環境を作�
 
 ### How do I get set up? ###
 
-* Summary of set up
-
-1. vagrant -digital ocean 接続用レポジトリをclone
+- #### vagrant -digital ocean 接続用レポジトリをclone
 
 ```
 #!shell
@@ -20,7 +18,7 @@ vagrant + degitalocean + ansible + varnish　で簡単にテスト環境を作�
 $ git clone git@bitbucket.org:chienowa/vagrant-do.git
 ```
 
-2. 必要なプラグインをインストール
+- #### 必要なプラグインをインストール
 
 ```
 #!shell
@@ -31,12 +29,12 @@ vagrant plugin list ;
 
 ```
 
-3. トークンをdigital ocean上で作成
+- #### トークンをdigital ocean上で作成
 
 vagrant からAPI経由で接続するためのトークンを生成してメモります。
 
 
-4. レポジトリ直下に .envを作成し、下記のような内容を記入
+- #### レポジトリ直下に .envを作成し、下記のような内容を記入
 
 ```
 #!shell
@@ -49,8 +47,7 @@ DO_CLIENT_ID="vagrant-do"
 DO_API_TOKEN=“{changeme}"
 ```
 
-
-5. 起動したいレシピをチェックアウト
+- ####  起動したいレシピをチェックアウト
 
 ```
 #!shell
@@ -63,7 +60,7 @@ $ vagrant up --provider=digital_ocean --provision
 
 ```
 
-6. ローカルのhostsに追加
+- #### ローカルのhostsに追加
 
 ```
 #!shell
@@ -76,7 +73,7 @@ $ vagrant up --provider=digital_ocean --provision
 
 ```
 
-7. サーバ構築完了！
+- #### サーバ構築完了！
 
 ```
 #!shell
@@ -97,7 +94,7 @@ varnish/vars/main.yml で追加でキャッシュするサイトを指定する�
 
 ```
 
-* Configuration
+### Configuration ###
 
 必要な設定値はyamlファイルに変数として定義しました。
 データベース名や、キャッシュするバックエンドサイトを指定する場合は、
@@ -109,4 +106,3 @@ provision/{wordpress,mt,drupal,varnish}/vars/main.yml 各ファイルを修正�
 vagrant + digitalocean + ansible でのサーバ構築自動化に興味あるみなさま。
 
 ご自身の責任の範囲で自由に改変して使っていただいてもかまいません。
-
