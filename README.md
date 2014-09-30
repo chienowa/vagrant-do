@@ -64,13 +64,23 @@ $ vagrant up --provider=digital_ocean --provision
 ```
 
 6. ローカルのhostsに追加
+
+```
+#!shell
+
 128.199.150.xx   default-do	default-do
 128.199.150.xx   mt-do	mt-do
 128.199.150.xx   drupal-do	drupal-do
 128.199.150.xx   wordpress-do	wordpress-do
 128.199.150.xx   costpa.net    costpa.net
 
+```
+
 7. サーバ構築完了！
+
+```
+#!shell
+
 http://wordpress-do:8080/
 http://mt-do:8080/
 http://drupal-do:8080/ 
@@ -85,6 +95,7 @@ http://drupal-do
 で利用可能です。
 varnish/vars/main.yml で追加でキャッシュするサイトを指定することができます。
 
+```
 
 * Configuration
 
